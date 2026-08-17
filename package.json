@@ -1,7 +1,15 @@
 {
-  "name": "my-project",
+  "name": "transformer-theory-analysis",
   "version": "0.1.0",
   "private": true,
+  "description": "单页交互式讲解：用一个例句把 Transformer 的注意力机制从分词拆到加权求和，面向没有 AI 基础的读者。",
+  "license": "MIT",
+  "author": "Chao Ding",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuma0605/transformer-theory-analysis.git"
+  },
+  "homepage": "https://github.com/kuma0605/transformer-theory-analysis#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
