@@ -4,6 +4,59 @@ import { useState, type CSSProperties, type ReactNode } from "react"
 
 const STEPS = [
   {
+    title: "开始之前：你不需要会什么",
+    content: () => (
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <Card>
+          <div style={{ fontSize: 18, fontWeight: 600, color: "#1a1a1a", marginBottom: 8 }}>聊天模型在「看」哪些词？</div>
+          <div style={{ fontSize: 13, color: "#444", lineHeight: 1.8 }}>
+            这份讲解给<b>完全没学过 AI</b> 的人。看完你能用自己的话说明：当模型读到「北京的天气怎么样」里的「怎么样」时，它为什么会去盯着「天气」，而不是随便一个词。
+          </div>
+        </Card>
+
+        <div style={{ background: "#F4F8FD", border: "0.5px solid #C9DDF3", borderLeft: "3px solid #378ADD", borderRadius: 10, padding: "14px 16px" }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: "#0C447C", marginBottom: 8 }}>先记住一件事</div>
+          <div style={{ fontSize: 13, color: "#334", lineHeight: 1.8 }}>
+            语言模型做的事很单一：<b>猜下一个词</b>。为了猜得准，它得先搞清楚——前面哪些词和当前这个词有关。后面每一步，都是在拆开「它到底怎么决定看谁」。
+          </div>
+        </div>
+
+        <Card>
+          <Label>你不需要会这些</Label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 13, color: "#444", lineHeight: 1.7 }}>
+            {[
+              { ok: "会小学加减乘除就够", no: "不用编程、不用微积分、不用读英文论文" },
+              { ok: "主路径点「下一步」就能走完", no: "遇到折叠的「补充」，跳过也完全没关系" },
+              { ok: "数字都可以用手算核对", no: "这里把几千维简化成 4 个数，只为了能看清" },
+            ].map(({ ok, no }) => (
+              <div key={ok}>
+                <div style={{ fontWeight: 600, color: "#085041" }}>{ok}</div>
+                <div style={{ fontSize: 12, color: "#888" }}>{no}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card>
+          <Label>路上会碰到的四个词（现在知道个大概就行）</Label>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {[
+              { k: "模型", v: "一个靠海量文本练出来的猜词机器，不是会思考的人" },
+              { k: "token", v: "切出来的一小块文字。这里按整词切，方便看；真实模型往往切得更碎" },
+              { k: "向量", v: "一串数字，用来表示一个词。可以把它想成这个词的身份证号码" },
+              { k: "注意力", v: "决定「当前这个词该看前面哪些词、看多少」的那套打分办法" },
+            ].map(({ k, v }) => (
+              <div key={k} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+                <div style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 600, color: "#0C447C", width: 48, flexShrink: 0 }}>{k}</div>
+                <div style={{ fontSize: 12, color: "#555", lineHeight: 1.6 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    ),
+  },
+  {
     title: "第 1 步：用户输入句子",
     content: () => (
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -14,7 +67,7 @@ const STEPS = [
           </div>
         </Card>
         <Card>
-          <Label>模型把句子切成一个个 token（词）</Label>
+          <Label>模型先把句子切成一块块 token</Label>
           <div style={{ display: "flex", justifyContent: "center", gap: 10, margin: "12px 0", flexWrap: "wrap" }}>
             {["北京", "的", "天气", "怎么样"].map((w) => (
               <div key={w} style={{ textAlign: "center" }}>
@@ -23,7 +76,16 @@ const STEPS = [
               </div>
             ))}
           </div>
-          <Muted>模型从左到右逐个生成下一个词。生成到“怎么样”时，它需要先“理解”这个词和前面所有词的关系。</Muted>
+          <Muted>
+            这里按整词切，只是为了好看。真实模型常常切得更碎，但不影响后面要讲的「看谁」。
+          </Muted>
+        </Card>
+        <Card>
+          <Label>它接下来要做的，是猜再往后的词</Label>
+          <div style={{ fontSize: 13, color: "#444", lineHeight: 1.8 }}>
+            模型从左到右一个词一个词往外写。写到「怎么样」时，它并不是在「理解人生」，而是在问：<b>前面哪些词，能帮我猜对下一个词？</b>
+          </div>
+          <Muted>后面整份讲解，都只盯着「怎么样」这一个词，看它怎么决定把注意力分给谁。</Muted>
         </Card>
       </div>
     ),
@@ -48,13 +110,16 @@ const STEPS = [
             ))}
           </div>
           <Muted>
-            这些数字是词的“身份证”，每个维度代表某种语义特征。这里为了能手算，简化成 4 维并给了维度名字；真实模型是几千维，且每一维代表什么人类读不懂。
+            这些数字是词的“身份证”。维度名字（地点感、气象感…）是我们为了好讲临时起的；真实模型是几千维，每一维代表什么人类读不懂。词的先后顺序模型另外有办法记住，这份讲解先跳过，不影响看懂后面的打分。
           </Muted>
         </Card>
 
         <Bridge title="接下来要解决的问题：这 4 个向量目前互不相干">
           <div style={{ marginBottom: 10 }}>
-            模型现在只知道每个词单独是什么意思，还不知道<b>它们之间的关系</b>。要让“怎么样”明白自己是在问天气，只需要做两件事：
+            模型现在只知道每个词单独是什么意思，还不知道<b>它们之间的关系</b>。只想先往下走的话，记住一句就行：<b>先给前面每个词打分，再按分数把含义揉进来</b>。招聘比方用来解释「为什么正好是三种向量」——可以慢慢看，也可以先跳到第 3 步。
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            要让“怎么样”明白自己是在问天气，只需要做两件事：
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {[
@@ -122,7 +187,7 @@ const STEPS = [
           </div>
 
           <div style={{ marginTop: 10 }} />
-          <Detail title="补充：为什么不能省成两个、甚至一个">
+          <Detail title="补充（可以后看）：为什么不能省成两个、甚至一个">
             <WhyThree />
           </Detail>
         </Bridge>
@@ -155,11 +220,11 @@ const STEPS = [
           </Muted>
         </Card>
 
-        <Detail title="补充：“乘以一个矩阵”到底在做什么">
+        <Detail title="补充（可以后看）：“乘以一个矩阵”到底在做什么">
           <MatrixExplain />
         </Detail>
 
-        <Detail title="补充：Wq / Wk / Wv 这三个矩阵是怎么来的">
+        <Detail title="补充（可以后看）：Wq / Wk / Wv 这三个矩阵是怎么来的">
           <Training />
         </Detail>
       </div>
@@ -168,18 +233,19 @@ const STEPS = [
   {
     title: "第 4 步：Q 和每个 K 做点积打分",
     content: () => {
-      const scores = [
-        { w: "北京", k: "[0.8,0.2,0.7,0.1]", score: 0.4, pct: 27 },
-        { w: "的", k: "[0.5,0.1,0.2,0.1]", score: 0.23, pct: 16 },
-        { w: "天气", k: "[0.0,1.0,0.0,0.8]", score: 1.46, pct: 100, hi: true },
-        { w: "怎么样", k: "[0.2,0.5,0.3,0.4]", score: 0.3, pct: 21 },
-      ]
+      const scores = WORDS.map((w, i) => ({
+        w,
+        k: fmtVec(K_AFTER[i]),
+        score: ATTN_SCORES[i],
+        pct: (ATTN_SCORES[i] / ATTN_MAX) * 100,
+        hi: i === 2,
+      }))
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Card>
             <Label>这就是上一步说的 ① 打分：“怎么样”的 Q 去和每个词的 K 做点积</Label>
             <div style={{ fontFamily: "monospace", fontSize: 12, color: "#666", margin: "8px 0" }}>
-              “怎么样”的 Q = [0.1, 0.9, 0.1, 0.7]
+              “怎么样”的 Q = {fmtVec(Q_HOW)}
             </div>
             {scores.map(({ w, k, score, pct, hi }) => (
               <div key={w} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
@@ -188,10 +254,12 @@ const STEPS = [
                 <div style={{ flex: 1, height: 8, background: "#f0f0f0", borderRadius: 4, overflow: "hidden" }}>
                   <div style={{ width: `${pct}%`, height: "100%", background: hi ? "#1D9E75" : "#85B7EB", borderRadius: 4, transition: "width 0.4s" }} />
                 </div>
-                <div style={{ width: 36, fontWeight: hi ? 600 : 400, color: hi ? "#085041" : "#666", fontSize: 13 }}>{score}</div>
+                <div style={{ width: 36, fontWeight: hi ? 600 : 400, color: hi ? "#085041" : "#666", fontSize: 13 }}>{score.toFixed(2)}</div>
               </div>
             ))}
-            <Muted>“天气”得分最高（1.46），因为它的 K 向量方向与“怎么样”的 Q 最接近——这是训练的结果，不是人工规则。</Muted>
+            <Muted>
+              “天气”得分最高（{ATTN_SCORES[2].toFixed(2)}），因为它的 K 和“怎么样”的 Q 最合拍——这是训练推出来的，不是人写的规则。下面四个分数都可以用同一套乘法加总核对。
+            </Muted>
           </Card>
 
           <Detail title="补充：“点积”是什么？就是比“合不合拍”">
@@ -238,6 +306,23 @@ const STEPS = [
               Q 和 K 做点积，就是在问：这个词<b>想找的东西</b>，和那个词<b>能提供的东西</b>，对不对得上。
             </div>
           </Detail>
+
+          <Detail title="补充：这四个分数是怎么乘出来的">
+            <div style={{ marginBottom: 8 }}>
+              每一项都是：Q 和那个词的 K，<b>对应位置相乘，再全部加起来</b>。Q = {fmtVec(Q_HOW)}
+            </div>
+            <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.9, color: "#444" }}>
+              {WORDS.map((w, i) => {
+                const k = K_AFTER[i]
+                const terms = Q_HOW.map((q, d) => `${q.toFixed(1)}×${k[d].toFixed(1)}`)
+                return (
+                  <div key={w} style={{ color: i === 2 ? "#085041" : "#555", fontWeight: i === 2 ? 600 : 400 }}>
+                    {w}：{terms.join(" + ")} = {ATTN_SCORES[i].toFixed(2)}
+                  </div>
+                )
+              })}
+            </div>
+          </Detail>
         </div>
       )
     },
@@ -245,12 +330,13 @@ const STEPS = [
   {
     title: "第 5 步：Softmax 把分数变成权重",
     content: () => {
-      const items = [
-        { w: "北京", raw: "0.40", weight: "0.35", pct: 35 },
-        { w: "的", raw: "0.23", weight: "0.05", pct: 5 },
-        { w: "天气", raw: "1.46", weight: "0.55", pct: 55, hi: true },
-        { w: "怎么样", raw: "0.30", weight: "0.05", pct: 5 },
-      ]
+      const items = WORDS.map((w, i) => ({
+        w,
+        raw: ATTN_SCORES[i].toFixed(2),
+        weight: ATTN_WEIGHTS[i].toFixed(2),
+        pct: ATTN_WEIGHTS[i] * 100,
+        hi: i === 2,
+      }))
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Card>
@@ -271,18 +357,20 @@ const STEPS = [
                   <div key={w} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <div style={{ width: 44, fontSize: 13, color: hi ? "#085041" : "#333", fontWeight: hi ? 600 : 400 }}>{w}</div>
                     <div style={{ flex: 1, height: 8, background: "#f0f0f0", borderRadius: 4, overflow: "hidden" }}>
-                      <div style={{ width: `${pct * 1.6}px`, height: "100%", background: hi ? "#1D9E75" : "#85B7EB", borderRadius: 4 }} />
+                      <div style={{ width: `${pct}%`, height: "100%", background: hi ? "#1D9E75" : "#85B7EB", borderRadius: 4 }} />
                     </div>
-                    <div style={{ width: 30, fontSize: 13, color: hi ? "#085041" : "#666", fontFamily: "monospace" }}>{weight}</div>
+                    <div style={{ width: 36, fontSize: 13, color: hi ? "#085041" : "#666", fontFamily: "monospace" }}>{weight}</div>
                   </div>
                 ))}
               </div>
             </div>
-            <Muted style={{ marginTop: 10 }}>“天气”权重最高（0.55），“北京”次之（0.35），“的”和“怎么样”本身贡献极少。</Muted>
+            <Muted style={{ marginTop: 10 }}>
+              天气约占 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%，自己约 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%，北京约 {(ATTN_WEIGHTS[0] * 100).toFixed(0)}%，「的」约 {(ATTN_WEIGHTS[1] * 100).toFixed(0)}%。天气仍然最高，但不是只看一个词——这才是把上面那四个分数做 Softmax 的真实结果。
+            </Muted>
           </Card>
           <Detail title="补充：为什么非要转成“加起来等于 1”">
-            因为下一步要按这些数字<b>分配比例</b>。原始分数（0.4、1.46…）没有上限，直接拿去混合，结果会越加越大、数值失控。
-            压成合计为 1 之后，它就变成了标准的“百分比”：天气占 55%、北京占 35%…… 混出来的向量始终保持在合理范围内。
+            因为下一步要按这些数字<b>分配比例</b>。原始分数（{ATTN_SCORES[0].toFixed(2)}、{ATTN_SCORES[2].toFixed(2)}…）没有上限，直接拿去混合，结果会越加越大、数值失控。
+            压成合计为 1 之后，它就变成了标准的“百分比”：天气约占 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%、自己约占 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%…… 混出来的向量始终保持在合理范围内。
           </Detail>
         </div>
       )
@@ -291,16 +379,21 @@ const STEPS = [
   {
     title: "第 6 步：按权重加权 Value，得到理解结果",
     content: () => {
-      const items = [
-        { w: "天气", p: "0.55", note: "贡献最多", hi: true },
-        { w: "北京", p: "0.35", note: "有一定贡献" },
-        { w: "的", p: "0.05", note: "几乎忽略", dim: true },
-        { w: "怎么样", p: "0.05", note: "几乎忽略", dim: true },
-      ]
+      const order = [2, 3, 0, 1]
+      const notes = ["有一定贡献", "最少", "贡献最多", "自己也看一点"]
+      const items = order.map((i) => ({
+        w: WORDS[i],
+        p: ATTN_WEIGHTS[i].toFixed(2),
+        note: notes[i],
+        hi: i === 2,
+        dim: i === 1,
+        share: ATTN_WEIGHTS[i] * 100,
+      }))
+      const barColors = ["#1D9E75", "#85B7EB", "#B7D3F0", "#e8e8e8"]
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Card>
-            <Label>这���是 ② 混合：按权重对每个词的 V 向量加权求和</Label>
+            <Label>这就是 ② 混合：按权重对每个词的 V 向量加权求和</Label>
             <div style={{ margin: "10px 0" }}>
               {items.map(({ w, p, note, hi, dim }) => (
                 <div key={w} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, opacity: dim ? 0.4 : 1 }}>
@@ -312,15 +405,17 @@ const STEPS = [
               ))}
             </div>
             <div style={{ display: "flex", height: 10, borderRadius: 5, overflow: "hidden", marginBottom: 4 }}>
-              <div style={{ width: "55%", background: "#1D9E75" }} />
-              <div style={{ width: "35%", background: "#85B7EB" }} />
-              <div style={{ width: "10%", background: "#e8e8e8" }} />
+              {items.map((item, i) => (
+                <div key={item.w} style={{ width: `${item.share}%`, background: barColors[i] }} />
+              ))}
             </div>
-            <Muted>新向量里 55% 的成分来自“天气”、35% 来自“北京”——它变成了一杯以天气为主的混合饮料。</Muted>
+            <Muted>
+              新向量里大约一半来自“天气”，其余掺了自己、北京和一点“的”——一杯以天气为主的混合饮料。
+            </Muted>
           </Card>
 
           <div style={{ background: "#E1F5EE", border: "0.5px solid #1D9E75", borderRadius: 10, padding: "12px 16px", borderLeft: "3px solid #1D9E75" }}>
-            <div style={{ fontWeight: 600, color: "#085041", fontSize: 14 }}>输出：主要包含“天气”的语义，兼含“北京”的信息</div>
+            <div style={{ fontWeight: 600, color: "#085041", fontSize: 14 }}>输出：主要包含“天气”的语义，也带一点“北京”和它自己</div>
             <div style={{ fontSize: 12, color: "#0F6E56", marginTop: 4 }}>模型就这样知道“怎么样”在问天气的状态，而不是北京的位置。</div>
           </div>
 
@@ -343,7 +438,7 @@ const STEPS = [
             </div>
           </Detail>
 
-          <Detail title="补充：这套流程不止算一次 —— 多头 与 多层">
+          <Detail title="补充（可以后看）：这套流程不止算一次 —— 多头 与 多层">
             <MultiHeadLayer />
           </Detail>
         </div>
@@ -373,14 +468,17 @@ const STEPS = [
             ))}
           </div>
           <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 8, background: "#f7f7f5", border: "0.5px solid #e0e0e0", fontSize: 12, color: "#666", lineHeight: 1.7 }}>
-            核心就两件事：<b>点积负责“算多少分”，加权求和负责“按分数分蛋糕”</b>。以上第 3~6 步是一个头做的事，真实模型里 32 层 × 32 头 = 1024 组权重，一层叠一层地把理解加深。
+            零基础记住这两句就够了：<b>点积负责“算多少分”，加权求和负责“按分数分蛋糕”</b>。主线到此结束。
           </div>
-          <Detail title="补充：这和 KV Cache 有什么关系">
+          <Detail title="补充（可以后看）：真实模型会把这套流程做很多遍">
+            以上第 3~6 步是<b>一个头</b>做的事。真实模型里会横着分成很多头、竖着叠很多层（例如 32 层 × 32 头），一层叠一层地把理解加深。想看「她」是怎么一层层锁定「小红」的，回到第 6 步打开「多头与多层」。
+          </Detail>
+          <Detail title="进阶（可完全跳过）：KV Cache 和显存">
             <div>
-              KV Cache 缓存的就是第 3 步里每个词的 <b>K 和 V 向量</b>。只要前面的词没变，它们的 K/V 就不用重算 —— 这就是为什么 prompt 的前缀必须稳定。
+              工程上会把第 3 步里每个词的 <b>K 和 V 向量</b>缓存起来。只要前面的词没变，它们的 K/V 就不用重算 —— 这就是 KV Cache，也是 prompt 前缀最好保持稳定的原因。
             </div>
             <div style={{ marginTop: 8 }}>
-              顺带一提，输入 10 个词，一次前向会产生 10 × 32 × 32 = 10240 组 q/k/v，全部缓存非常吃显存。所以现在普遍改用 <b>GQA</b>：Q 保留 32 头，K/V 只留 8 组，每 4 个 Q 头共享一组，显存直接省 4 倍。
+              输入 10 个词、32 层 32 头，一次会冒出上万组 q/k/v，全缓存很吃显存。所以现在常用 <b>GQA</b>：Q 仍是 32 头，K/V 只留 8 组，每 4 个 Q 头共享一组，显存大约省 4 倍。不懂这些，不影响你已经看懂注意力。
             </div>
           </Detail>
         </div>
@@ -400,6 +498,24 @@ const VEC = [
 ]
 const dot = (a: number[], b: number[]) => a.reduce((s, x, i) => s + x * b[i], 0)
 const SYM = VEC.map((a) => VEC.map((b) => dot(a, b)))
+
+// 第 4–6 步共用：Q/K 与注意力分数都从这里算，避免示意数字和手算对不上
+const Q_HOW = [0.1, 0.9, 0.1, 0.7]
+const K_AFTER = [
+  [0.8, 0.2, 0.7, 0.1],
+  [0.5, 0.1, 0.2, 0.1],
+  [0.0, 1.0, 0.0, 0.8],
+  [0.2, 0.5, 0.3, 0.4],
+]
+const fmtVec = (v: number[]) => `[${v.map((x) => x.toFixed(1)).join(",")}]`
+const softmax = (xs: number[]) => {
+  const ex = xs.map((x) => Math.exp(x))
+  const s = ex.reduce((a, b) => a + b, 0)
+  return ex.map((e) => e / s)
+}
+const ATTN_SCORES = K_AFTER.map((k) => dot(Q_HOW, k))
+const ATTN_WEIGHTS = softmax(ATTN_SCORES)
+const ATTN_MAX = Math.max(...ATTN_SCORES)
 
 // —— 多头 / 多层演示 ——
 const SENT = ["小明", "把", "书", "给了", "小红", "，", "她", "很", "开心"]
@@ -685,7 +801,7 @@ function Training() {
           </div>
         </div>
         <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.7, marginTop: 6, lineHeight: 1.7 }}>
-          {round === 0 ? "出厂状态：一个没有任何含义的随机小数。" : "没有人告诉��它这一格该填多少 —— 这个数字是被“答错”一次次推上来的。"}
+          {round === 0 ? "出厂状态：一个没有任何含义的随机小数。" : "没有人告诉过它这一格该填多少 —— 这个数字是被“答错”一次次推上来的。"}
         </div>
       </div>
 
@@ -1345,6 +1461,7 @@ export default function Page() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", maxWidth: 620, margin: "0 auto", padding: "20px 16px" }}>
+      <div style={{ fontSize: 12, color: "#888", marginBottom: 6 }}>注意力是怎么工作的 · 零基础版</div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{step.title}</div>
         <div style={{ display: "flex", gap: 5 }}>
@@ -1366,7 +1483,7 @@ export default function Page() {
           onClick={() => setCur(cur === STEPS.length - 1 ? 0 : cur + 1)}
           style={{ padding: "8px 18px", borderRadius: 8, border: "0.5px solid #378ADD", background: "#378ADD", color: "#fff", fontSize: 13, cursor: "pointer", fontWeight: 500 }}
         >
-          {cur === STEPS.length - 1 ? "从头再看 ↺" : "下一步 →"}
+          {cur === 0 ? "开始 →" : cur === STEPS.length - 1 ? "从头再看 ↺" : "下一步 →"}
         </button>
       </div>
     </div>
