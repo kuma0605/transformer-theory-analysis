@@ -4,7 +4,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: '注意力是怎么工作的 · 零基础版',
-  description: '给没学过 AI 的人：用一句话看懂聊天模型为什么会盯着「天气」而不是随便一个词。',
+  description: '写给没有 AI 基础的读者：用一句话讲清楚，聊天模型读到“怎么样”时，为什么会去看“天气”。',
   generator: 'v0.app',
   icons: {
     icon: [
