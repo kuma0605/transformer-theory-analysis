@@ -43,7 +43,7 @@ const STEPS = [
             {[
               { k: "模型", v: "在海量文本上训练出来的预测程序，并不具备人类的思考能力" },
               { k: "token", v: "文本切分后的最小单位。本文按整词切分，便于展示；真实模型通常切得更细" },
-              { k: "词向量", v: "表示一个词的一串数字，相当于这个词的身份编号" },
+              { k: "词向量", v: "表示一个词的一串数字，每个数字是它在某个侧面上的强弱" },
               { k: "注意力", v: "一套打分机制，决定当前的词该关注前面的词和它自己，各关注多少" },
             ].map(({ k, v }) => (
               <div key={k} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
@@ -110,7 +110,7 @@ const STEPS = [
             ))}
           </div>
           <Muted>
-            这串数字相当于这个词的身份编号。上方的维度名称（地点感、气象感等）是为讲解方便临时命名的；真实模型有几千个维度，每一维具体代表什么，人无法直接读出。词的先后顺序由另一套机制记录，本文不展开，不影响理解后面的打分过程。
+            一串数字合起来就叫这个词的<b>向量</b>。每个数字对应上方的一个侧面，表示这个词在该侧面上的强弱：“天气”的气象感是 1.0，地点感只有 0.3。一个数字装不下一个词的多个侧面，所以要用一串。侧面的名称（地点感、气象感等）是为讲解方便临时命名的；真实模型有几千个数字，每一个具体代表什么，人无法直接读出。词的先后顺序由另一套机制记录，本文不展开，不影响理解后面的打分过程。
           </Muted>
         </Card>
 
@@ -1337,9 +1337,22 @@ function WhyThree() {
 
         <div style={{ marginTop: 10, padding: "10px 12px", background: "#f7f7f5", borderRadius: 8, fontSize: 12, color: "#555", lineHeight: 1.8 }}>
           但语言中的关系是<b>单向</b>的。在“小明把书给了小红，<b>她</b>很开心”中，“她”必须紧盯“小红”才能确定指代对象；而“小红”出现时，并不需要同等程度地回看“她”。
+          <div style={{ marginTop: 8, color: "#085041" }}>
+            拆成 Q、K 之后，每个词都有了两个向量：Q 是“我在找什么”，K 是“我是什么”。两个方向各用各的：
+          </div>
+          <div style={{ marginTop: 6, display: "flex", flexDirection: "column", gap: 4 }}>
+            {[
+              { dir: "“她”看“小红”", eq: "她的 Q × 小红的 K" },
+              { dir: "“小红”看“她”", eq: "小红的 Q × 她的 K" },
+            ].map(({ dir, eq }) => (
+              <div key={dir} style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap" }}>
+                <span style={{ width: 108, flexShrink: 0, color: "#085041" }}>{dir}</span>
+                <span style={{ background: "#E1F5EE", borderRadius: 5, padding: "2px 8px", color: "#085041" }}>{eq}</span>
+              </div>
+            ))}
+          </div>
           <div style={{ marginTop: 6, color: "#085041" }}>
-            拆成 Q、K 之后，正向计算的是 <code style={{ fontFamily: "monospace" }}>q_她 · k_小红</code>，反向计算的是{" "}
-            <code style={{ fontFamily: "monospace" }}>q_小红 · k_她</code>。两者使用<b>不同的向量</b>，两个分数因此可以不相等。
+            两次用的是<b>四个不同的向量</b>，算出来的两个分数自然可以不相等。回到招聘的类比：一个人写的招聘需求和他的自我介绍本来就是两份材料，所以 A 评价 B、B 评价 A 完全可以给出不同的分数。
           </div>
         </div>
       </div>
