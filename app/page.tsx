@@ -260,6 +260,9 @@ const STEPS = [
             <Muted>
               “天气”的相关度分数最高（{ATTN_SCORES[2].toFixed(2)}），因为它的 K 与“怎么样”的 Q 方向最接近。“的”是虚词，分数为负（{ATTN_SCORES[1].toFixed(2)}），说明两者不仅无关，方向还相反。这一结果由训练得到，并非人为设定的规则。以上四个分数都可以用同一种乘法逐项验算。
             </Muted>
+            <Muted>
+              <b>为什么用“怎么样”的 Q？</b>并不是只有它才打分。四个词各自都拿自己的 Q 去乘一遍所有词的 K，四套打分同时进行、互不干扰。此处只跟踪“怎么样”，是因为它位于句末，模型正要靠它预测下一个词。若改为跟踪“天气”，就换成“天气”的 Q 去乘各词的 K，做法完全相同。
+            </Muted>
           </Card>
 
           <Detail title="延伸：点积是什么，为什么能衡量相关度">
@@ -274,7 +277,7 @@ const STEPS = [
                 { name: "朋友B", cells: ["-3", "-1", "5"] },
               ].map(({ name, cells, head }) => (
                 <div key={name || "head"} style={{ display: "flex", gap: 6, marginBottom: 4 }}>
-                  <div style={{ width: 48, color: head ? "#aaa" : "#333", fontWeight: head ? 400 : 600 }}>{name}</div>
+                  <div style={{ width: 48, color: head ? "#6e6e6e" : "#333", fontWeight: head ? 400 : 600 }}>{name}</div>
                   {cells.map((c, i) => (
                     <div
                       key={i}
@@ -284,7 +287,7 @@ const STEPS = [
                         padding: "3px 0",
                         borderRadius: 5,
                         background: head ? "transparent" : "#f2f2f0",
-                        color: head ? "#aaa" : "#333",
+                        color: head ? "#6e6e6e" : "#333",
                       }}
                     >
                       {c}
@@ -304,6 +307,27 @@ const STEPS = [
             <div style={{ marginTop: 10, color: "#5a5a5a" }}>
               同号相乘为正（加分），异号相乘为负（扣分），因此点积天然可以衡量两组数字是否接近。
               Q 与 K 做点积，问的就是：这个词<b>想找的内容</b>，与那个词<b>能提供的内容</b>是否匹配。
+            </div>
+          </Detail>
+
+          <Detail title="延伸：为什么是 Q 乘 K，而不是别的组合">
+            <div style={{ marginBottom: 8 }}>
+              打分要回答的是“<b>谁能满足我的需求</b>”。这是需求与条件之间的匹配，两端角色不同，因此必须一端出 Q、一端出 K。换成其他组合都问不出这件事：
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {[
+                { eq: "Q × Q", why: "两个需求相比较，等于两位招聘方互相看简历需求，找出的是“和我想招同类人的人”，而非我要招的人。" },
+                { eq: "K × K", why: "两份自我介绍相比较，只能找出彼此相似的词。“天气”与“气候”会得高分，可“怎么样”想找的并不是与自己相似的词。" },
+                { eq: "Q × K", why: "需求对条件，正是打分需要的问法，且天然不对称：“怎么样”对“天气”的分数，与“天气”对“怎么样”的分数互不相同。" },
+              ].map(({ eq, why }) => (
+                <div key={eq} style={{ display: "flex", gap: 10, alignItems: "baseline", flexWrap: "wrap" }}>
+                  <div style={{ fontFamily: "monospace", fontSize: 13, fontWeight: 600, width: 62, flexShrink: 0, color: eq === "Q × K" ? "#085041" : "#993C1D" }}>{eq}</div>
+                  <div style={{ flex: 1, minWidth: 200, fontSize: 12, color: "#555", lineHeight: 1.7 }}>{why}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 10, color: "#555", lineHeight: 1.7 }}>
+              不对称这一点尤其要紧。若只用一个向量给自己打分，“她看小红”与“小红看她”将得到完全相同的分数，模型无从分辨谁看谁。第 2 步的“为什么不能只用两个甚至一个向量”对此有详细说明。
             </div>
           </Detail>
 
