@@ -455,6 +455,12 @@ const STEPS = [
         share: ATTN_WEIGHTS[i] * 100,
       }))
       const barColors = ["#1D9E75", "#85B7EB", "#B7D3F0", "#e8e8e8"]
+
+      // 计算加权混合后的 4 维新向量
+      const vNew = DIMS.map((_, d) =>
+        WORDS.reduce((sum, _, i) => sum + ATTN_WEIGHTS[i] * VEC[i][d], 0)
+      )
+
       return (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <Card>
@@ -483,6 +489,93 @@ const STEPS = [
             <div style={{ fontWeight: 600, color: "#085041", fontSize: 14 }}>输出：以“天气”的含义为主，同时包含“北京”和自身的信息</div>
             <div style={{ fontSize: 12, color: "#0F6E56", marginTop: 4 }}>模型由此判断出，“怎么样”问的是天气的状态，而不是北京的位置。</div>
           </div>
+
+          <Detail title="延伸：手算验算 —— 混合后的新向量长什么样">
+            <div style={{ marginBottom: 10 }}>
+              各词在<b>第 2 步设定的 4 维向量</b>以及<b>第 5 步算出的权重</b>对照如下（无需往回翻）：
+            </div>
+
+            {/* 4 维向量与权重对照表 */}
+            <div style={{ overflowX: "auto", marginBottom: 12 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5, fontFamily: "monospace", textAlign: "center" }}>
+                <thead>
+                  <tr style={{ background: "#f0f4f8", borderBottom: "1px solid #d0dbe5", color: "#0C447C" }}>
+                    <th style={{ padding: "6px 8px", textAlign: "left", fontFamily: "system-ui, sans-serif" }}>词语</th>
+                    <th style={{ padding: "6px 8px", color: "#378ADD" }}>权重(占比)</th>
+                    {DIMS.map((d) => (
+                      <th key={d} style={{ padding: "6px 8px" }}>{d}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {WORDS.map((w, i) => {
+                    const hi = i === 2
+                    return (
+                      <tr
+                        key={w}
+                        style={{
+                          background: hi ? "#E1F5EE" : i % 2 === 0 ? "#fff" : "#fafafa",
+                          borderBottom: "0.5px solid #eee",
+                          color: hi ? "#085041" : "#333",
+                          fontWeight: hi ? 600 : 400,
+                        }}
+                      >
+                        <td style={{ padding: "6px 8px", textAlign: "left", fontFamily: "system-ui, sans-serif" }}>
+                          {w} {hi && <span style={{ fontSize: 10, opacity: 0.8 }}>(最关注)</span>}
+                        </td>
+                        <td style={{ padding: "6px 8px", color: hi ? "#085041" : "#378ADD", fontWeight: 600 }}>
+                          {(ATTN_WEIGHTS[i] * 100).toFixed(0)}% ({ATTN_WEIGHTS[i].toFixed(2)})
+                        </td>
+                        {VEC[i].map((v, d) => (
+                          <td key={d} style={{ padding: "6px 8px" }}>
+                            {v.toFixed(1)}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ marginBottom: 8, color: "#555" }}>
+              用每行的<b>权重 × 对应维度的数值</b>，再<b>纵向相加</b>，就得到新向量的 4 个数字：
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, fontFamily: "monospace", fontSize: 12, lineHeight: 1.8 }}>
+              {DIMS.map((dName, d) => {
+                const terms = WORDS.map((w, i) => `${ATTN_WEIGHTS[i].toFixed(2)}×${VEC[i][d].toFixed(1)}`)
+                const isMax = d === 1
+                return (
+                  <div key={dName} style={{ background: isMax ? "#E1F5EE" : "#f7f7f5", border: isMax ? "0.5px solid #1D9E75" : "0.5px solid #e0e0e0", padding: "6px 10px", borderRadius: 6, color: isMax ? "#085041" : "#444" }}>
+                    <div style={{ fontWeight: 600, display: "flex", justifyContent: "space-between" }}>
+                      <span>{dName}（第 {d + 1} 维）</span>
+                      <span>新得分 = {vNew[d].toFixed(2)}</span>
+                    </div>
+                    <div style={{ fontSize: 11, opacity: 0.85, marginTop: 2 }}>
+                      {terms.join(" + ")} = <b>{vNew[d].toFixed(2)}</b>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* 前后对比 */}
+            <div style={{ marginTop: 12, background: "#fff", border: "0.5px solid #e0e0e0", borderRadius: 8, padding: "10px 12px" }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 6 }}>前后对比：发生了什么质的变化？</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11.5, fontFamily: "monospace" }}>
+                <div style={{ color: "#777" }}>
+                  原本孤立向量：[{VEC[3].map((x) => x.toFixed(2)).join(", ")}] → 只知道是疑问句尾词
+                </div>
+                <div style={{ color: "#085041", fontWeight: 600 }}>
+                  融合上下文后：[{vNew.map((x) => x.toFixed(2)).join(", ")}] → <span style={{ fontFamily: "system-ui, sans-serif" }}>气象感（{vNew[1].toFixed(2)}）跃升为第一特征！</span>
+                </div>
+              </div>
+              <div style={{ marginTop: 6, fontSize: 11.5, color: "#555", lineHeight: 1.6 }}>
+                此时的“怎么样”不再是空洞的提问，而是一个<b>“专指天气状况如何的提问”</b>，为预测下一个词（如“晴朗”）做好了准备。
+              </div>
+            </div>
+          </Detail>
 
           <Detail title="延伸：加权求和就是按重要性计算平均">
             <div style={{ marginBottom: 8 }}>普通平均给每一项相同的权重，加权求和则让<b>重要的项占更大比例</b>。最常见的例子是计算总成绩：</div>
@@ -671,13 +764,25 @@ function MultiHeadLayer() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div style={{ lineHeight: 1.9 }}>
-        前面第 3 至 6 步，是<b>一个注意力头</b>完成的工作。真实模型会在两个方向上重复这一流程：
-        <div style={{ marginTop: 6 }}>
-          <b>并列的“头”</b>：同一句话由 32 个头同时处理，各自关注不同角度。
+      {/* 核心概念：头 vs 层 */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ fontSize: 12.5, color: "#333", lineHeight: 1.8 }}>
+          前面第 3 至 6 步，是<b>一个注意力头在单层中</b>完成的工作。真实大模型会在<b>广度（头）</b>和<b>深度（层）</b>两个方向上矩阵式重复：
         </div>
-        <div style={{ marginTop: 2 }}>
-          <b>串联的“层”</b>：每处理一遍，就把新的理解<b>写回每个词</b>，再用更新后的词重新处理一遍，共 32 遍。
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          <div style={{ background: "#EEEDFE", border: "0.5px solid #534AB7", borderRadius: 8, padding: "10px 12px" }}>
+            <div style={{ fontWeight: 600, color: "#3C3489", fontSize: 13, marginBottom: 4 }}>并联的“头”（32 个观察员）</div>
+            <div style={{ fontSize: 11.5, color: "#44398A", lineHeight: 1.6 }}>
+              <b>同一时刻并行计算</b>。32 组独立的 Q/K/V 各看一个角度（如语法、指代、修饰、动作）。算完后拼接（Concat）成全景视角。
+            </div>
+          </div>
+          <div style={{ background: "#E1F5EE", border: "0.5px solid #1D9E75", borderRadius: 8, padding: "10px 12px" }}>
+            <div style={{ fontWeight: 600, color: "#085041", fontSize: 13, marginBottom: 4 }}>串联的“层”（32 轮流水线）</div>
+            <div style={{ fontSize: 11.5, color: "#0B5845", lineHeight: 1.6 }}>
+              <b>前后依次递进推敲</b>。每层将 32 个头汇总的新理解<b>叠加写回原词</b>（残差连接），再作为输入送入下一层加深抽象。
+            </div>
+          </div>
         </div>
       </div>
 
@@ -704,7 +809,7 @@ function MultiHeadLayer() {
 
       {/* 层选择 */}
       <div>
-        <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 6 }}>点击查看不同深度的层</div>
+        <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 6 }}>点击查看不同深度的层（串联推进）：</div>
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {LAYERS.map((x, i) => (
             <button
@@ -732,7 +837,7 @@ function MultiHeadLayer() {
       {/* 三个头 */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <div style={{ fontSize: 12, color: "#666" }}>
-          在第 {L.n} 层，“她”由 32 个头同时处理。以下选取其中 3 个，观察它们各自关注的词：
+          在第 {L.n} 层，“她”由 <b>32 个头同时处理</b>。以下选取 3 个代表性的头，观察各自的分工：
         </div>
         {L.heads.map(({ h, job, a }) => {
           const top = a.indexOf(Math.max(...a))
@@ -770,7 +875,7 @@ function MultiHeadLayer() {
       {/* 合并 → 这一层的理解 */}
       <div style={{ background: "#EEEDFE", border: "0.5px solid #534AB7", borderRadius: 10, padding: "12px 14px" }}>
         <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.75, marginBottom: 6 }}>
-          32 个头的结果合并后叠加回“她”的向量，作为第 {L.n + 1} 层的输入
+          32 个头的结果拼接并乘以 Wo 后，<b>残差叠加回“她”的原向量</b>，作为第 {L.n + 1} 层的输入
         </div>
         <div style={{ fontSize: 13, color: "#3C3489", lineHeight: 1.8 }}>
           这一层结束后，“她”携带的信息是：<b>{L.know}</b>
@@ -784,25 +889,28 @@ function MultiHeadLayer() {
       </div>
 
       <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px", lineHeight: 1.9 }}>
-        <div style={{ fontWeight: 600, color: "#333", marginBottom: 6 }}>三个容易混淆的地方</div>
+        <div style={{ fontWeight: 600, color: "#333", marginBottom: 6 }}>四个核心疑问解析</div>
         <div style={{ color: "#555" }}>
-          <b>1. 为什么需要这么多层？</b>一次加权求和只能建立<b>一层</b>关联。从“她是代词”推进到“她收到书，所以开心”，中间要经过多层关联，而每层只能推进一步。
+          <b>1. 什么是 32 个“头”？</b>32 组完全独立的 Wq/Wk/Wv/Wo 矩阵。一个头只能问一种问题（如“谁是我的修饰词”），32 个头就像 32 位不同专长的观察员，同时从语法、指代、修饰、语义等 32 个维度观察同一句话。
         </div>
         <div style={{ color: "#555", marginTop: 6 }}>
-          <b>2. 下一层的“她”为什么不同了？</b>因为每层的输出都会<b>叠加</b>到该词原有的向量上。第 20 层接收到的“她”，已经是带有“我是小红”这一信息的新向量：字面没变，向量已经不是最初那串数字。
+          <b>2. 什么是 32 个“层”？</b>32 级首尾相连的计算流水线。一次注意力只能发现一层直接关联（如“她是代词”），要推导出复杂的跨词逻辑（“小明给小红书 → 她是小红 → 她收到书所以开心”），必须像层层推导一样经过多轮迭代。
         </div>
         <div style={{ color: "#555", marginTop: 6 }}>
-          <b>3. 由谁决定使用哪个头的 Wq/Wk/Wv？</b>没有谁来决定。数据流到第几层的第几个头，就使用该头的权重，其间没有任何路由或判断，如同流水线上的固定工位。
+          <b>3. 为什么要“写回叠加”（残差连接），而不是直接替换？</b>如果每层直接用注意力输出覆盖原词，该词原有的字面含义（如“她是个代词”）就会被冲刷丢失。<b>原向量 + 注意力增量</b>相当于在白纸底稿上层层添加批注，既保留本义又融合语境。
+        </div>
+        <div style={{ color: "#555", marginTop: 6 }}>
+          <b>4. 32 个头的结果如何合体？</b>每个头算出一段较短的向量（例如 128 维），把 32 个头的结果水平拼接在一起（32 × 128 = 4096 维），再乘以一个输出矩阵 Wo 融合成一个统一的向量。
         </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "monospace", flexWrap: "wrap" }}>
         {[
-          { n: "32", l: "层" },
+          { n: "32", l: "层（深度）" },
           { n: "×", l: "" },
-          { n: "32", l: "头" },
+          { n: "32", l: "头（广度）" },
           { n: "=", l: "" },
-          { n: "1024", l: "组 Q/K/V", hi: true },
+          { n: "1024", l: "组 Q/K/V 矩阵", hi: true },
         ].map((x, i) => (
           <div key={i} style={{ textAlign: "center" }}>
             <div style={{ fontSize: x.hi ? 24 : 20, fontWeight: 600, color: x.hi ? "#085041" : "#555" }}>{x.n}</div>
@@ -811,7 +919,7 @@ function MultiHeadLayer() {
         ))}
       </div>
       <div style={{ color: "#5a5a5a", textAlign: "center", fontSize: 11, marginTop: -4 }}>
-        以 Llama-2 7B 为例：打分 → Softmax → 加权求和，整个过程共执行 1024 次。
+        以标准 7B 模型为例：打分 → Softmax → 加权求和，整套注意力在内部并发与串行执行 1024 次。
       </div>
     </div>
   )
