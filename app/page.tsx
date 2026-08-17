@@ -31,7 +31,7 @@ const STEPS = [
             ].map(({ ok, no }) => (
               <div key={ok}>
                 <div style={{ fontWeight: 600, color: "#085041" }}>{ok}</div>
-                <div style={{ fontSize: 12, color: "#888" }}>{no}</div>
+                <div style={{ fontSize: 12, color: "#5a5a5a" }}>{no}</div>
               </div>
             ))}
           </div>
@@ -72,7 +72,7 @@ const STEPS = [
             {["北京", "的", "天气", "怎么样"].map((w) => (
               <div key={w} style={{ textAlign: "center" }}>
                 <div style={tokenStyle()}>{w}</div>
-                <div style={{ fontSize: 11, color: "#888", marginTop: 4 }}>token</div>
+                <div style={{ fontSize: 11, color: "#5a5a5a", marginTop: 4 }}>token</div>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ const STEPS = [
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Card>
           <Label>每个词转换成一串数字，称为词向量（Embedding）</Label>
-          <div style={{ fontSize: 11, color: "#aaa", textAlign: "center", margin: "10px 0 4px", fontFamily: "monospace" }}>
+          <div style={{ fontSize: 11, color: "#6e6e6e", textAlign: "center", margin: "10px 0 4px", fontFamily: "monospace" }}>
             [ {DIMS.join("　")} ]
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, margin: "4px 0 12px", justifyContent: "center" }}>
@@ -250,7 +250,7 @@ const STEPS = [
             {scores.map(({ w, k, score, pct, hi }) => (
               <div key={w} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                 <div style={{ width: 52, textAlign: "right", fontWeight: hi ? 600 : 400, color: hi ? "#085041" : "#333", fontSize: 13 }}>{w}</div>
-                <div style={{ fontSize: 10, color: "#aaa", fontFamily: "monospace", width: 120, flexShrink: 0 }}>{k}</div>
+                <div style={{ fontSize: 10, color: "#6e6e6e", fontFamily: "monospace", width: 120, flexShrink: 0 }}>{k}</div>
                 <div style={{ flex: 1, height: 8, background: "#f0f0f0", borderRadius: 4, overflow: "hidden" }}>
                   <div style={{ width: `${pct}%`, height: "100%", background: hi ? "#1D9E75" : "#85B7EB", borderRadius: 4, transition: "width 0.4s" }} />
                 </div>
@@ -301,7 +301,7 @@ const STEPS = [
                 你 · 朋友B = 5×(-3) + 3×(-1) + (-4)×5 = <span style={{ fontWeight: 600, fontSize: 14 }}>-38</span>　偏好相反
               </div>
             </div>
-            <div style={{ marginTop: 10, color: "#888" }}>
+            <div style={{ marginTop: 10, color: "#5a5a5a" }}>
               同号相乘为正（加分），异号相乘为负（扣分），因此点积天然可以衡量两组数字是否接近。
               Q 与 K 做点积，问的就是：这个词<b>想找的内容</b>，与那个词<b>能提供的内容</b>是否匹配。
             </div>
@@ -343,16 +343,16 @@ const STEPS = [
             <Label>Softmax：把相关度分数换算成合计为 1 的权重</Label>
             <div style={{ display: "flex", gap: 16, marginTop: 10, flexWrap: "wrap" }}>
               <div style={{ flex: 1, minWidth: 140 }}>
-                <div style={{ fontSize: 11, color: "#aaa", marginBottom: 6 }}>相关度分数</div>
+                <div style={{ fontSize: 11, color: "#6e6e6e", marginBottom: 6 }}>相关度分数</div>
                 {items.map(({ w, raw, hi }) => (
                   <div key={w} style={{ display: "flex", justifyContent: "space-between", padding: "5px 8px", borderRadius: 6, marginBottom: 4, background: hi ? "#E1F5EE" : "#f7f7f5", color: hi ? "#085041" : "#333", fontSize: 13 }}>
                     <span>{w}</span><span style={{ fontFamily: "monospace" }}>{raw}</span>
                   </div>
                 ))}
               </div>
-              <div style={{ display: "flex", alignItems: "center", fontSize: 20, color: "#aaa" }}>→</div>
+              <div style={{ display: "flex", alignItems: "center", fontSize: 20, color: "#6e6e6e" }}>→</div>
               <div style={{ flex: 1, minWidth: 140 }}>
-                <div style={{ fontSize: 11, color: "#aaa", marginBottom: 6 }}>注意力权重（合计 = 1）</div>
+                <div style={{ fontSize: 11, color: "#6e6e6e", marginBottom: 6 }}>注意力权重（合计 = 1）</div>
                 {items.map(({ w, weight, pct, hi }) => (
                   <div key={w} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                     <div style={{ width: 44, fontSize: 13, color: hi ? "#085041" : "#333", fontWeight: hi ? 600 : 400 }}>{w}</div>
@@ -391,7 +391,7 @@ const STEPS = [
                 { k: `除以 √${D_K} ≈ ${D_K_ROOT.toFixed(2)}`, ws: SCALED_WEIGHTS },
               ].map(({ k, ws }) => (
                 <div key={k} style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "baseline" }}>
-                  <span style={{ width: 108, flexShrink: 0, color: "#aaa", fontFamily: "system-ui, sans-serif" }}>{k}</span>
+                  <span style={{ width: 108, flexShrink: 0, color: "#6e6e6e", fontFamily: "system-ui, sans-serif" }}>{k}</span>
                   {WORDS.map((word, i) => (
                     <span
                       key={word}
@@ -441,7 +441,7 @@ const STEPS = [
                   <div style={{ fontFamily: "monospace", fontSize: 13, color: hi ? "#085041" : "#555", fontWeight: hi ? 600 : 400, width: 36 }}>{p}</div>
                   <div style={{ fontSize: 13, color: "#555" }}>×</div>
                   <div style={{ padding: "4px 12px", borderRadius: 6, background: hi ? "#FAEEDA" : "#f7f7f5", border: `0.5px solid ${hi ? "#BA7517" : "#e0e0e0"}`, fontSize: 13, color: hi ? "#633806" : "#333" }}>“{w}”的 V</div>
-                  <div style={{ fontSize: 11, color: "#aaa" }}>{note}</div>
+                  <div style={{ fontSize: 11, color: "#6e6e6e" }}>{note}</div>
                 </div>
               ))}
             </div>
@@ -463,7 +463,7 @@ const STEPS = [
           <Detail title="延伸：加权求和就是按重要性计算平均">
             <div style={{ marginBottom: 8 }}>普通平均给每一项相同的权重，加权求和则让<b>重要的项占更大比例</b>。最常见的例子是计算总成绩：</div>
             <div style={{ fontFamily: "monospace", fontSize: 12, color: "#444", lineHeight: 1.9 }}>
-              <div style={{ color: "#888" }}>期末占 60%，作业占 30%，考勤占 10%</div>
+              <div style={{ color: "#5a5a5a" }}>期末占 60%，作业占 30%，考勤占 10%</div>
               <div>总分 = 90×0.6 + 80×0.3 + 60×0.1</div>
               <div style={{ color: "#0C447C", fontWeight: 600 }}>
                 　　 = 54 + 24 + 6 = <span style={{ fontSize: 14 }}>84 分</span>
@@ -474,7 +474,7 @@ const STEPS = [
               <div style={{ width: "30%", background: "#85B7EB" }} />
               <div style={{ width: "10%", background: "#d8e6f5" }} />
             </div>
-            <div style={{ color: "#888" }}>
+            <div style={{ color: "#5a5a5a" }}>
               权重合计为 1，因此结果不会失控。上面对 V 的处理完全相同，只是被加权的对象不是分数，而是一串串向量。
             </div>
           </Detail>
@@ -659,7 +659,7 @@ function MultiHeadLayer() {
 
       {/* 例句 */}
       <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px" }}>
-        <div style={{ fontSize: 11, color: "#888", marginBottom: 8 }}>以下句为例，只跟踪“她”这一个词，观察它在各层获得了哪些信息</div>
+        <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 8 }}>以下句为例，只跟踪“她”这一个词，观察它在各层获得了哪些信息</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 3, fontSize: 14 }}>
           {SENT.map((w, i) => (
             <span
@@ -680,7 +680,7 @@ function MultiHeadLayer() {
 
       {/* 层选择 */}
       <div>
-        <div style={{ fontSize: 11, color: "#888", marginBottom: 6 }}>点击查看不同深度的层</div>
+        <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 6 }}>点击查看不同深度的层</div>
         <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
           {LAYERS.map((x, i) => (
             <button
@@ -716,7 +716,7 @@ function MultiHeadLayer() {
             <div key={h} style={{ background: "#fff", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "10px 12px" }}>
               <div style={{ display: "flex", gap: 8, alignItems: "baseline", flexWrap: "wrap", marginBottom: 8 }}>
                 <div style={{ fontFamily: "monospace", fontSize: 12, fontWeight: 600, color: "#3C3489" }}>{h}</div>
-                <div style={{ fontSize: 11, color: "#888" }}>{job}</div>
+                <div style={{ fontSize: 11, color: "#5a5a5a" }}>{job}</div>
                 <div style={{ marginLeft: "auto", fontSize: 11, color: "#085041" }}>
                   最关注 <b>{SENT[top]}</b>
                 </div>
@@ -782,11 +782,11 @@ function MultiHeadLayer() {
         ].map((x, i) => (
           <div key={i} style={{ textAlign: "center" }}>
             <div style={{ fontSize: x.hi ? 24 : 20, fontWeight: 600, color: x.hi ? "#085041" : "#555" }}>{x.n}</div>
-            <div style={{ fontSize: 11, color: "#aaa", marginTop: 2 }}>{x.l}</div>
+            <div style={{ fontSize: 11, color: "#6e6e6e", marginTop: 2 }}>{x.l}</div>
           </div>
         ))}
       </div>
-      <div style={{ color: "#888", textAlign: "center", fontSize: 11, marginTop: -4 }}>
+      <div style={{ color: "#5a5a5a", textAlign: "center", fontSize: 11, marginTop: -4 }}>
         以 Llama-2 7B 为例：打分 → Softmax → 加权求和，整个过程共执行 1024 次。
       </div>
     </div>
@@ -807,24 +807,25 @@ function attnOf(w: number) {
 function Training() {
   const [w, setW] = useState(0.05) // Wk 中“关注气象感”那一项的数值
   const [round, setRound] = useState(0)
-  const [log, setLog] = useState<{ r: number; guess: string; p: number; delta: number }[]>([])
+  const [log, setLog] = useState<{ r: number; guess: string; p: number; from: number; to: number; delta: number }[]>([])
 
   const attn = attnOf(w)
   const pRight = attn[2] // 预测出“晴朗”的把握
+  const pctRight = Math.round(pRight * 100) // 取整后再算差额，保证两个数加起来正好 100
   const guess = GUESS[attn.indexOf(Math.max(...attn))]
   const correct = guess === "晴朗"
 
   function step(n: number) {
     let cw = w
     let cr = round
-    const entries: { r: number; guess: string; p: number; delta: number }[] = []
+    const entries: { r: number; guess: string; p: number; from: number; to: number; delta: number }[] = []
     for (let i = 0; i < n; i++) {
       const a = attnOf(cw)
       const g = GUESS[a.indexOf(Math.max(...a))]
       const err = 1 - a[2] // 与完全正确之间的差距
-      const delta = err * 0.55 // 梯度：偏差越大，调整幅度越大
-      entries.push({ r: cr + 1, guess: g, p: a[2], delta })
-      cw = Math.min(2, cw + delta)
+      const next = Math.min(2, cw + err * 0.55) // 梯度：偏差越大，调整幅度越大
+      entries.push({ r: cr + 1, guess: g, p: a[2], from: cw, to: next, delta: next - cw }) // 记录实际生效的调整量，保证 from + delta = to
+      cw = next
       cr += 1
     }
     setW(cw)
@@ -842,19 +843,22 @@ function Training() {
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div style={{ lineHeight: 1.9 }}>
         这三个矩阵<b>既不是人工编写的，也不是推导出来的</b>。它们初始时是一组<b>随机数</b>，模型在海量文本上反复<b>预测下一个词</b>，不断比对答案并微调，才逐渐变成有效的数值。
-        <div style={{ marginTop: 6 }}>下面的演示只保留其中一个权重，可以逐轮训练观察它的变化：</div>
+        <div style={{ marginTop: 6 }}>
+          下面的演示从 Wk 中挑出<b>一个数字</b>，逐轮训练观察它的变化。矩阵里的每个数字都称为一个<b>权重</b>，它们就是训练要调整的对象。（后面第 5 步还会出现“注意力权重”，那是各词分到的百分比，与此处矩阵里的数字不是一回事。）
+        </div>
       </div>
 
       {/* 练习题 */}
       <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px" }}>
-        <div style={{ fontSize: 11, color: "#888", marginBottom: 6 }}>模型反复练习的题型（答案就在原文中，无需人工标注）</div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 4 }}>模型反复练习的题型</div>
+        <div style={{ fontSize: 11, color: "#555", marginBottom: 8 }}>答案就在原文之中，无需人工标注</div>
         <div style={{ fontSize: 14, color: "#333", lineHeight: 1.9 }}>
           北京的天气怎么样？今天很
-          <span style={{ display: "inline-block", minWidth: 52, textAlign: "center", margin: "0 4px", padding: "2px 8px", borderRadius: 6, background: "#fff", border: "1px dashed #bbb", color: "#bbb" }}>
+          <span style={{ display: "inline-block", minWidth: 52, textAlign: "center", margin: "0 4px", padding: "2px 8px", borderRadius: 6, background: "#fff", border: "1px dashed #bbb", color: "#767676" }}>
             ？
           </span>
         </div>
-        <div style={{ fontSize: 11, color: "#888", marginTop: 6 }}>
+        <div style={{ fontSize: 11, color: "#5a5a5a", marginTop: 6 }}>
           正确答案：<b style={{ color: "#085041" }}>晴朗</b>。要答对，模型必须关注到“天气”这个词。
         </div>
       </div>
@@ -863,31 +867,36 @@ function Training() {
       <div style={{ background: "#EEEDFE", border: "0.5px solid #534AB7", borderRadius: 10, padding: "12px 14px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 6 }}>
           <div style={{ fontSize: 12, color: "#3C3489" }}>
-            <b>Wk</b> 中“关注气象感”那一项的数值
+            正在训练的权重：<b>Wk</b> 中“关注气象感”那一项
           </div>
           <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.7 }}>已训练 {round} 轮</div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8 }}>
-          <div style={{ fontFamily: "monospace", fontSize: 22, fontWeight: 600, color: "#3C3489", width: 62 }}>{w.toFixed(2)}</div>
+          <div style={{ fontFamily: "monospace", fontSize: 22, fontWeight: 600, color: "#3C3489", width: 74 }}>{w.toFixed(3)}</div>
           <div style={{ flex: 1, height: 8, background: "rgba(0,0,0,0.07)", borderRadius: 4, overflow: "hidden" }}>
             <div style={{ width: `${(w / 2) * 100}%`, height: "100%", background: "#534AB7", borderRadius: 4, transition: "width 200ms" }} />
           </div>
         </div>
         <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.7, marginTop: 6, lineHeight: 1.7 }}>
-          {round === 0 ? "初始状态：一个没有任何含义的随机小数。" : "没有人指定这个数值应该是多少，它是在一次次答错中被逐步推上来的。"}
+          {round === 0
+            ? "初始状态：0.050，一个不带任何含义的随机小数。真实模型同样从随机数起步，而不是从 0 起步——若权重全为 0，所有维度将完全对称，训练无从区分它们。"
+            : "没有人指定这个数值应该是多少，它是在一次次比对答案的过程中被逐步推上来的。"}
         </div>
       </div>
 
       {/* 注意力分布与预测结果 */}
       <div style={{ background: "#fff", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px" }}>
-        <div style={{ fontSize: 11, color: "#888", marginBottom: 8 }}>由这个权重算出的注意力分布</div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 4 }}>“怎么样”的注意力分布</div>
+        <div style={{ fontSize: 11, color: "#555", marginBottom: 10, lineHeight: 1.7 }}>
+          这个权重决定每个词的 K（“我是什么”）。K 一变，“怎么样”与各词的匹配程度就跟着变，再换算成合计 100% 的比例，即为下图。匹配与换算的具体做法，第 4、5 步会讲，此处只需观察它随权重如何变化。
+        </div>
         {WORDS.map((word, i) => (
           <div key={word} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
             <div style={{ width: 46, fontSize: 12, color: i === 2 ? "#085041" : "#888", fontWeight: i === 2 ? 600 : 400 }}>{word}</div>
             <div style={{ flex: 1, height: 8, background: "#f0f0f0", borderRadius: 4, overflow: "hidden" }}>
               <div style={{ width: `${attn[i] * 100}%`, height: "100%", background: i === 2 ? "#1D9E75" : "#c8c8c8", borderRadius: 4, transition: "width 200ms" }} />
             </div>
-            <div style={{ width: 38, fontSize: 11, fontFamily: "monospace", color: "#999", textAlign: "right" }}>{(attn[i] * 100).toFixed(0)}%</div>
+            <div style={{ width: 38, fontSize: 11, fontFamily: "monospace", color: "#666", textAlign: "right" }}>{(attn[i] * 100).toFixed(0)}%</div>
           </div>
         ))}
 
@@ -901,11 +910,21 @@ function Training() {
           }}
         >
           <div style={{ fontSize: 12, color: correct ? "#085041" : "#712B13", lineHeight: 1.8 }}>
-            模型这次填的是 <b style={{ fontSize: 14 }}>{guess}</b>
+            {round === 0 ? "训练前" : `训练 ${round} 轮后`}，此刻考它一次，模型会填 <b style={{ fontSize: 14 }}>{guess}</b>
             {correct ? "　✓ 回答正确" : "　✗ 正确答案是“晴朗”"}
           </div>
           <div style={{ fontSize: 11, color: correct ? "#085041" : "#712B13", opacity: 0.8, marginTop: 4 }}>
-            模型对“晴朗”的把握只有 {(pRight * 100).toFixed(0)}%，距离 100% 还差 {(100 - pRight * 100).toFixed(0)}。<b>这个差距就是梯度</b>，它决定这个权重需要上调多少。
+            {correct ? (
+              <>
+                虽然已经答对，把握也只有 {pctRight}%，距离 100% 还差 {100 - pctRight} 个百分点。
+                <b>只要还有差距，梯度就不为零</b>，训练不会就此停下，这个权重会继续上调。
+              </>
+            ) : (
+              <>
+                模型对“晴朗”的把握只有 {pctRight}%，距离 100% 还差 {100 - pctRight} 个百分点。
+                <b>这个差距就是梯度</b>，它决定这个权重需要上调多少。
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -954,21 +973,47 @@ function Training() {
       </div>
 
       {/* 日志 */}
-      {log.length > 0 && (
-        <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "10px 12px" }}>
-          <div style={{ fontSize: 11, color: "#888", marginBottom: 6 }}>最近几轮（最新在上）</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: "monospace", fontSize: 11 }}>
-            {log.map((e, i) => (
-              <div key={`${e.r}-${i}`} style={{ display: "flex", gap: 8, color: e.guess === "晴朗" ? "#085041" : "#993C1D", flexWrap: "wrap" }}>
-                <span style={{ width: 52, color: "#bbb" }}>第{e.r}轮</span>
-                <span style={{ width: 62 }}>填“{e.guess}”</span>
-                <span style={{ width: 66, opacity: 0.8 }}>把握 {(e.p * 100).toFixed(0)}%</span>
-                <span style={{ color: "#534AB7" }}>权重 +{e.delta.toFixed(3)}</span>
-              </div>
-            ))}
+      <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "10px 12px" }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 4 }}>训练记录（最新在上）</div>
+        <div style={{ fontSize: 11, color: "#555", marginBottom: 8, lineHeight: 1.7 }}>
+          考试成绩<b>完全由当前权重决定</b>：只要权重还是这个数，考一次和考一百次都是同样的结果。所以最上面一行的成绩，就是<b>下一轮将要使用的那份成绩</b>；点一次按钮，你会看到这两个数字原样出现在新增的那一行里，并非又考了一回。
+          <div style={{ marginTop: 4 }}>
+            考试本身不会让人进步：考完若不复习总结，再考多少次，成绩依旧。<b>“训练 1 轮”相当于考后的那次复习</b>——拿这份成绩算出与满分的差距，据此把权重推高一步。权重变了，下一次的成绩才会跟着变。
+          </div>
+          <div style={{ marginTop: 4 }}>
+            下面每行记录一轮：模型当时填的词、它对“晴朗”有几成把握、以及这一轮把权重从多少调到了多少。把握越低，调整幅度越大；上一轮的终点即下一轮的起点，因此各行首尾相接。
           </div>
         </div>
-      )}
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: "monospace", fontSize: 11 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              flexWrap: "wrap",
+              color: correct ? "#085041" : "#993C1D",
+              background: "#EEEDFE",
+              borderRadius: 5,
+              padding: "3px 6px",
+              margin: "-3px -6px 2px",
+            }}
+          >
+            <span style={{ width: 52, color: "#8983C9" }}>当前水平</span>
+            <span style={{ width: 62 }}>会填“{guess}”</span>
+            <span style={{ width: 66, opacity: 0.8 }}>把握 {pctRight}%</span>
+            <span style={{ color: "#8983C9" }}>权重仍是 {w.toFixed(3)}</span>
+          </div>
+          {log.map((e, i) => (
+            <div key={`${e.r}-${i}`} style={{ display: "flex", gap: 8, color: e.guess === "晴朗" ? "#085041" : "#993C1D", flexWrap: "wrap" }}>
+              <span style={{ width: 52, color: "#767676" }}>第{e.r}轮</span>
+              <span style={{ width: 62 }}>填“{e.guess}”</span>
+              <span style={{ width: 66, opacity: 0.8 }}>把握 {(e.p * 100).toFixed(0)}%</span>
+              <span style={{ color: "#534AB7" }}>
+                权重 {e.from.toFixed(3)} → {e.to.toFixed(3)}（上调 {e.delta.toFixed(3)}）
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px", lineHeight: 1.9 }}>
         <div style={{ fontWeight: 600, color: "#333", marginBottom: 6 }}>以上过程就是反向传播</div>
@@ -978,7 +1023,7 @@ function Training() {
         <div style={{ color: "#555", marginTop: 8 }}>
           真实训练中同时调整的不是 1 个权重，而是 <b>70 亿个</b>；练习题也不是 1 道，而是数万亿道。持续训练数月之后，Wq/Wk/Wv 就从随机数变成了“疑问词会主动关注气象词”的状态。
         </div>
-        <div style={{ color: "#888", fontSize: 11, marginTop: 8 }}>
+        <div style={{ color: "#5a5a5a", fontSize: 11, marginTop: 8 }}>
           因此下一步中“天气”能得到 {ATTN_SCORES[2].toFixed(2)} 的高分，完全是这些数值训练后的结果。模型内部并不存在“疑问词应当关注名词”这样一条规则，也没有人写过这条规则。
         </div>
       </div>
@@ -1006,7 +1051,7 @@ function MatrixExplain() {
       {/* 选择器 */}
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
         <div>
-          <div style={{ fontSize: 11, color: "#888", marginBottom: 4 }}>选择要计算的词</div>
+          <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 4 }}>选择要计算的词</div>
           <div style={{ display: "flex", gap: 4 }}>
             {[2, 3].map((i) => (
               <button
@@ -1028,7 +1073,7 @@ function MatrixExplain() {
           </div>
         </div>
         <div>
-          <div style={{ fontSize: 11, color: "#888", marginBottom: 4 }}>选择要相乘的矩阵</div>
+          <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 4 }}>选择要相乘的矩阵</div>
           <div style={{ display: "flex", gap: 4 }}>
             {(["Wq", "Wk"] as const).map((k) => (
               <button
@@ -1057,7 +1102,7 @@ function MatrixExplain() {
         <div style={{ display: "flex", gap: 3, marginBottom: 3 }}>
           <div style={{ width: 74, flexShrink: 0 }} />
           {DIMS.map((d) => (
-            <div key={d} style={{ width: 54, flexShrink: 0, textAlign: "center", color: "#aaa" }}>
+            <div key={d} style={{ width: 54, flexShrink: 0, textAlign: "center", color: "#6e6e6e" }}>
               {d}
             </div>
           ))}
@@ -1171,7 +1216,7 @@ function MatrixExplain() {
         <div style={{ fontSize: 12, color: "#666", lineHeight: 1.8, marginTop: 10 }}>
           词向量没有任何变化，只是<b>提问不同</b>，得到的结果就完全不同。“怎么样”在寻找气象类词（Q 值高），“天气”恰好属于气象类词（K 值高），因此第 4 步两者做点积时，分数自然很高。
         </div>
-        <div style={{ fontSize: 11, color: "#aaa", lineHeight: 1.7, marginTop: 8 }}>
+        <div style={{ fontSize: 11, color: "#555", lineHeight: 1.7, marginTop: 8 }}>
           真实模型中这些问题没有名称，也无人编写，权重全部由训练得到。此处为便于理解，才给每一行起了名字。
         </div>
       </div>
@@ -1204,7 +1249,7 @@ function WhyThree() {
         <div style={{ fontSize: 13, fontWeight: 600, color: "#3C3489", marginBottom: 2 }}>只用 1 个：所有关系被迫变成双向对等</div>
         <div style={{ fontSize: 12, color: "#666", lineHeight: 1.8, marginBottom: 10 }}>
           如果不拆分，两个词的分数就是它们的<b>原始向量直接点积</b>。先列出第 2 步的 4 个词向量
-          <span style={{ color: "#aaa" }}>（真实模型为 4096 维，这里简化为 4 维，便于验算）</span>：
+          <span style={{ color: "#6e6e6e" }}>（真实模型为 4096 维，这里简化为 4 维，便于验算）</span>：
         </div>
 
         {/* 词向量表 */}
@@ -1212,7 +1257,7 @@ function WhyThree() {
           <div style={{ display: "flex", gap: 3, marginBottom: 3 }}>
             <div style={{ width: 52, flexShrink: 0 }} />
             {DIMS.map((d) => (
-              <div key={d} style={{ width: 56, flexShrink: 0, textAlign: "center", color: "#aaa" }}>
+              <div key={d} style={{ width: 56, flexShrink: 0, textAlign: "center", color: "#6e6e6e" }}>
                 {d}
               </div>
             ))}
@@ -1250,14 +1295,14 @@ function WhyThree() {
           <div style={{ display: "flex", gap: 3 }}>
             <div style={{ width: 52, flexShrink: 0 }} />
             {WORDS.map((w) => (
-              <div key={w} style={{ width: 56, flexShrink: 0, textAlign: "center", color: "#aaa" }}>
+              <div key={w} style={{ width: 56, flexShrink: 0, textAlign: "center", color: "#6e6e6e" }}>
                 {w}
               </div>
             ))}
           </div>
           {WORDS.map((rw, i) => (
             <div key={rw} style={{ display: "flex", gap: 3, alignItems: "center" }}>
-              <div style={{ width: 52, flexShrink: 0, color: "#888", textAlign: "right", paddingRight: 4 }}>{rw}</div>
+              <div style={{ width: 52, flexShrink: 0, color: "#5a5a5a", textAlign: "right", paddingRight: 4 }}>{rw}</div>
               {WORDS.map((cw, j) => {
                 const self = i === j
                 const active = i === ri && j === ci
@@ -1365,7 +1410,7 @@ function WhyThree() {
           但在 K=V 的情况下，同一个旋钮也决定了“天气”被选中后<b>传出的内容</b>。拖动下方滑块观察：
         </div>
 
-        <div style={{ fontSize: 11, color: "#888", marginBottom: 4 }}>把“天气”的向量朝“更容易被命中”的方向调整</div>
+        <div style={{ fontSize: 11, color: "#5a5a5a", marginBottom: 4 }}>把“天气”的向量朝“更容易被命中”的方向调整</div>
         <input
           type="range"
           min={0}
@@ -1490,7 +1535,7 @@ function Detail({ title, children }: { title: string; children: ReactNode }) {
           ▶
         </span>
         <span style={{ flex: 1 }}>{title}</span>
-        <span style={{ fontSize: 11, color: "#bbb" }}>{open ? "收起" : "展开"}</span>
+        <span style={{ fontSize: 11, color: "#767676" }}>{open ? "收起" : "展开"}</span>
       </button>
       {open && (
         <div style={{ padding: "2px 16px 14px 30px", fontSize: 12.5, color: "#444", lineHeight: 1.8, borderTop: "0.5px solid #f0f0f0" }}>
@@ -1502,11 +1547,11 @@ function Detail({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function Label({ children }: { children: ReactNode }) {
-  return <div style={{ fontSize: 12, color: "#888", marginBottom: 8 }}>{children}</div>
+  return <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 8 }}>{children}</div>
 }
 
 function Muted({ children, style }: { children: ReactNode; style?: CSSProperties }) {
-  return <div style={{ fontSize: 12, color: "#aaa", lineHeight: 1.6, marginTop: 6, ...style }}>{children}</div>
+  return <div style={{ fontSize: 12, color: "#555", lineHeight: 1.7, marginTop: 6, ...style }}>{children}</div>
 }
 
 function tokenStyle(): CSSProperties {
@@ -1519,7 +1564,7 @@ export default function Page() {
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", maxWidth: 620, margin: "0 auto", padding: "20px 16px" }}>
-      <div style={{ fontSize: 12, color: "#888", marginBottom: 6 }}>注意力是怎么工作的 · 零基础版</div>
+      <div style={{ fontSize: 12, color: "#5a5a5a", marginBottom: 6 }}>注意力是怎么工作的 · 零基础版</div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
         <div style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a" }}>{step.title}</div>
         <div style={{ display: "flex", gap: 5 }}>
