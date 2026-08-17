@@ -764,7 +764,7 @@ function MultiHeadLayer() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      {/* 核心概念：头 vs 层 */}
+      {/* 1. 什么是头与层？ */}
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <div style={{ fontSize: 12.5, color: "#333", lineHeight: 1.8 }}>
           前面第 3 至 6 步，是<b>一个注意力头在单层中</b>完成的工作。真实大模型会在<b>广度（头）</b>和<b>深度（层）</b>两个方向上矩阵式重复：
@@ -772,17 +772,73 @@ function MultiHeadLayer() {
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
           <div style={{ background: "#EEEDFE", border: "0.5px solid #534AB7", borderRadius: 8, padding: "10px 12px" }}>
-            <div style={{ fontWeight: 600, color: "#3C3489", fontSize: 13, marginBottom: 4 }}>并联的“头”（32 个观察员）</div>
+            <div style={{ fontWeight: 600, color: "#3C3489", fontSize: 13, marginBottom: 4 }}>👁️ 并联的“头”（32 个观察员）</div>
             <div style={{ fontSize: 11.5, color: "#44398A", lineHeight: 1.6 }}>
-              <b>同一时刻并行计算</b>。32 组独立的 Q/K/V 各看一个角度（如语法、指代、修饰、动作）。算完后拼接（Concat）成全景视角。
+              <b>同一时刻并行计算</b>。一组 Wq/Wk/Wv 只能问一个角度的问题。32 个头就是 32 组独立的参数，同时从语法、指代、修饰、动作等 32 个维度看句子，算完后拼接（Concat）成全景视角。
             </div>
           </div>
           <div style={{ background: "#E1F5EE", border: "0.5px solid #1D9E75", borderRadius: 8, padding: "10px 12px" }}>
-            <div style={{ fontWeight: 600, color: "#085041", fontSize: 13, marginBottom: 4 }}>串联的“层”（32 轮流水线）</div>
+            <div style={{ fontWeight: 600, color: "#085041", fontSize: 13, marginBottom: 4 }}>🔄 串联的“层”（32 轮流水线）</div>
             <div style={{ fontSize: 11.5, color: "#0B5845", lineHeight: 1.6 }}>
-              <b>前后依次递进推敲</b>。每层将 32 个头汇总的新理解<b>叠加写回原词</b>（残差连接），再作为输入送入下一层加深抽象。
+              <b>前后依次递进推敲</b>。只看一遍难以推导深层逻辑。每层把 32 个头汇总的新理解<b>叠加写回原词</b>（残差连接），再作为输入送入下一层，实现由浅入深的抽象推理。
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 2. 对比总结表格 */}
+      <div style={{ background: "#fff", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px", overflowX: "auto" }}>
+        <div style={{ fontSize: 12.5, fontWeight: 600, color: "#333", marginBottom: 8 }}>“头”与“层”对比总结</div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5, lineHeight: 1.6 }}>
+          <thead>
+            <tr style={{ background: "#f5f5f5", borderBottom: "1px solid #ddd", color: "#555" }}>
+              <th style={{ padding: "6px 8px", textAlign: "left", width: 68 }}>对比维度</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "#3C3489" }}>“头”（Head · 广度）</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "#085041" }}>“层”（Layer · 深度）</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { d: "排列方式", h: "并联（同一时间全部并发计算）", l: "串联（前后依次流水线推进）" },
+              { d: "核心作用", h: "捕捉同一层级下不同侧面的关系（语法、指代、修饰等）", l: "实现由浅入深的抽象推理（词法 → 句法 → 全局逻辑）" },
+              { d: "形象类比", h: "32 位不同专长的专家同时会诊", l: "32 轮层层递进的审稿推敲流程" },
+              { d: "输出处理", h: "32 份结果拼接（Concat）并乘 Wo 融合", l: "残差叠加写回原词，作为下一层的输入" },
+              { d: "典型规模", h: "常见 8 ~ 32 个头（如 7B 模型为 32 头）", l: "常见 12 ~ 80 层（如 7B 为 32 层，70B 为 80 层）" },
+            ].map(({ d, h, l }, idx) => (
+              <tr key={d} style={{ borderBottom: "0.5px solid #eee", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
+                <td style={{ padding: "6px 8px", fontWeight: 600, color: "#555", whiteSpace: "nowrap" }}>{d}</td>
+                <td style={{ padding: "6px 8px", color: "#3C3489" }}>{h}</td>
+                <td style={{ padding: "6px 8px", color: "#085041" }}>{l}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 3. 为什么是 32？超参数说明 */}
+      <div style={{ background: "#F4F8FD", border: "0.5px solid #C9DDF3", borderLeft: "3px solid #378ADD", borderRadius: 8, padding: "10px 12px" }}>
+        <div style={{ fontSize: 12.5, fontWeight: 600, color: "#0C447C", marginBottom: 4 }}>
+          💡 为什么是 32 头、32 层？这只是举例吗？
+        </div>
+        <div style={{ fontSize: 11.5, color: "#334", lineHeight: 1.7 }}>
+          <b>是的，“32 头 32 层”是一个经典的代表性示例</b>（源自业界主流的 LLaMA-7B/8B 模型）。在实际工程中，头数和层数是由设计者设定的<b>超参数</b>，模型体量不同，配置也不同：
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginTop: 6, fontSize: 11, fontFamily: "monospace" }}>
+          <div style={{ background: "#fff", padding: "6px 8px", borderRadius: 6, border: "0.5px solid #d0dbe5" }}>
+            <div style={{ color: "#0C447C", fontWeight: 600 }}>初代 Transformer</div>
+            <div style={{ color: "#555", marginTop: 2 }}>6 层 · 8 头</div>
+          </div>
+          <div style={{ background: "#fff", padding: "6px 8px", borderRadius: 6, border: "0.5px solid #d0dbe5" }}>
+            <div style={{ color: "#0C447C", fontWeight: 600 }}>LLaMA-7B (本页)</div>
+            <div style={{ color: "#378ADD", fontWeight: 600, marginTop: 2 }}>32 层 · 32 头</div>
+          </div>
+          <div style={{ background: "#fff", padding: "6px 8px", borderRadius: 6, border: "0.5px solid #d0dbe5" }}>
+            <div style={{ color: "#0C447C", fontWeight: 600 }}>LLaMA-70B</div>
+            <div style={{ color: "#555", marginTop: 2 }}>80 层 · 64 头</div>
+          </div>
+        </div>
+        <div style={{ fontSize: 11, color: "#555", marginTop: 6, lineHeight: 1.6 }}>
+          头数通常满足：总维度 d_model = 头数 × 单头维度（如 4096 = 32 × 128）。模型再大或再小，这套计算逻辑完全通用。
         </div>
       </div>
 
@@ -874,10 +930,10 @@ function MultiHeadLayer() {
 
       {/* 合并 → 这一层的理解 */}
       <div style={{ background: "#EEEDFE", border: "0.5px solid #534AB7", borderRadius: 10, padding: "12px 14px" }}>
-        <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.75, marginBottom: 6 }}>
-          32 个头的结果拼接并乘以 Wo 后，<b>残差叠加回“她”的原向量</b>，作为第 {L.n + 1} 层的输入
+        <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.75, marginBottom: 4 }}>
+          多头合体流程：32 个头结果拼接 (Concat) → 乘以 Wo 深度融合 → <b>残差叠加写回“她”的原向量</b>
         </div>
-        <div style={{ fontSize: 13, color: "#3C3489", lineHeight: 1.8 }}>
+        <div style={{ fontSize: 13, color: "#3C3489", lineHeight: 1.8, marginTop: 4 }}>
           这一层结束后，“她”携带的信息是：<b>{L.know}</b>
         </div>
         <div style={{ display: "flex", gap: 3, marginTop: 10 }}>
@@ -886,6 +942,37 @@ function MultiHeadLayer() {
           ))}
         </div>
         <div style={{ fontSize: 11, color: "#3C3489", opacity: 0.6, marginTop: 5 }}>理解深度</div>
+      </div>
+
+      {/* 四大矩阵家族表格 */}
+      <div style={{ background: "#fff", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px", overflowX: "auto" }}>
+        <div style={{ fontSize: 12.5, fontWeight: 600, color: "#333", marginBottom: 6 }}>Transformer 的四大矩阵家族 (Wq, Wk, Wv, Wo)</div>
+        <div style={{ fontSize: 11.5, color: "#555", marginBottom: 8, lineHeight: 1.6 }}>
+          第 3 步介绍了生成 Q、K、V 的三个矩阵，而 <b>Wo（输出投影矩阵）</b> 是多头注意力的第 4 个关键矩阵，负责将 32 位专家的成果统稿融合：
+        </div>
+        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5, lineHeight: 1.6 }}>
+          <thead>
+            <tr style={{ background: "#f5f5f5", borderBottom: "1px solid #ddd", color: "#555" }}>
+              <th style={{ padding: "6px 8px", textAlign: "left", width: 44 }}>矩阵</th>
+              <th style={{ padding: "6px 8px", textAlign: "left", color: "#0C447C", width: 130 }}>全称与角色</th>
+              <th style={{ padding: "6px 8px", textAlign: "left" }}>负责的具体环节</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { m: "Wq", n: "Query 投影（提需求）", r: "单头打分：生成 Q，明确“我在找什么”", c: "#1D9E75" },
+              { m: "Wk", n: "Key 投影（做匹配）", r: "单头打分：生成 K，明确“我是什么”", c: "#534AB7" },
+              { m: "Wv", n: "Value 投影（提内容）", r: "单头加权：生成 V，提供被关注的具体内容", c: "#BA7517" },
+              { m: "Wo", n: "Output 投影（总编辑统稿）", r: "多头合体：将 32 个头拼接的长向量深度交叉融合并对齐维度", c: "#0C447C" },
+            ].map(({ m, n, r, c }, idx) => (
+              <tr key={m} style={{ borderBottom: "0.5px solid #eee", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
+                <td style={{ padding: "6px 8px", fontWeight: 600, color: c, fontFamily: "monospace" }}>{m}</td>
+                <td style={{ padding: "6px 8px", color: "#333", fontWeight: 500 }}>{n}</td>
+                <td style={{ padding: "6px 8px", color: "#555" }}>{r}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div style={{ background: "#f7f7f5", border: "0.5px solid #e0e0e0", borderRadius: 10, padding: "12px 14px", lineHeight: 1.9 }}>
@@ -900,7 +987,13 @@ function MultiHeadLayer() {
           <b>3. 为什么要“写回叠加”（残差连接），而不是直接替换？</b>如果每层直接用注意力输出覆盖原词，该词原有的字面含义（如“她是个代词”）就会被冲刷丢失。<b>原向量 + 注意力增量</b>相当于在白纸底稿上层层添加批注，既保留本义又融合语境。
         </div>
         <div style={{ color: "#555", marginTop: 6 }}>
-          <b>4. 32 个头的结果如何合体？</b>每个头算出一段较短的向量（例如 128 维），把 32 个头的结果水平拼接在一起（32 × 128 = 4096 维），再乘以一个输出矩阵 Wo 融合成一个统一的向量。
+          <b>4. 突然出现的 Wo 是什么？32 个头怎么合体？</b>
+          <div style={{ marginTop: 2 }}>
+            ① <b>水平拼接 (Concat)</b>：32 个头各算出 128 维的小向量，排成一排变成 4096 维（32 × 128 = 4096）。此时它们只是物理排在一起，还没互相交流；
+          </div>
+          <div style={{ marginTop: 2 }}>
+            ② <b>乘以 Wo 矩阵</b>：Wo 像总编辑一样，把 32 个维度的线索深度交叉相乘、融为一体，并保证输出维度刚好等于 4096，以便顺利写回原词。
+          </div>
         </div>
       </div>
 
