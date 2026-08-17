@@ -389,13 +389,13 @@ const STEPS = [
               </div>
             </div>
             <Muted style={{ marginTop: 10 }}>
-              四个权重分别是：天气约 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%，“怎么样”自身约 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%，北京约 {(ATTN_WEIGHTS[0] * 100).toFixed(0)}%，“的”约 {(ATTN_WEIGHTS[1] * 100).toFixed(0)}%。
+              四个权重分别是：“天气”约 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%，“怎么样”自身约 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%，“北京”约 {(ATTN_WEIGHTS[0] * 100).toFixed(0)}%，“的”约 {(ATTN_WEIGHTS[1] * 100).toFixed(0)}%。
               天气仍然最高，但模型并非只看这一个词。以上数值由上一步的四个分数经 Softmax 换算得到。
             </Muted>
           </Card>
           <Detail title="延伸：为什么要换算成合计为 1">
             因为下一步要按这些数值<b>分配比例</b>。相关度分数（{ATTN_SCORES[0].toFixed(2)}、{ATTN_SCORES[2].toFixed(2)} 等）没有上限，直接用于混合会使结果不断变大、数值失控。
-            换算成合计为 1 之后，它们相当于百分比：天气约 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%，“怎么样”自身约 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%。这样混合出来的向量始终处于合理范围内。
+            换算成合计为 1 之后，它们相当于百分比：“天气”约 {(ATTN_WEIGHTS[2] * 100).toFixed(0)}%，“怎么样”自身约 {(ATTN_WEIGHTS[3] * 100).toFixed(0)}%。这样混合出来的向量始终处于合理范围内。
           </Detail>
           <Detail title="延伸：完整公式里还要先除以 √d">
             <div style={{ marginBottom: 8 }}>
@@ -1225,15 +1225,15 @@ function MatrixExplain() {
         <div style={{ fontSize: 12, fontWeight: 600, color: "#333", marginBottom: 8 }}>换一个矩阵，问题就完全不同，这就是所谓提取不同侧面</div>
         <div style={{ fontSize: 12, color: "#555", lineHeight: 1.9 }}>
           <div>
-            拿 <b>天气</b> 去问 <code style={{ fontFamily: "monospace", color: "#3C3489" }}>Wk</code>：“我是气象或状态吗” →{" "}
+            拿 <b>“天气”</b> 去问 <code style={{ fontFamily: "monospace", color: "#3C3489" }}>Wk</code>：“我是气象或状态吗” →{" "}
             <b style={{ color: "#3C3489", fontFamily: "monospace" }}>{ask(2, "Wk", 1).toFixed(2)}</b>，高度符合。
           </div>
           <div>
-            同一个 <b>天气</b> 去问 <code style={{ fontFamily: "monospace", color: "#085041" }}>Wq</code>：“我在找气象或状态吗” →{" "}
+            同一个 <b>“天气”</b> 去问 <code style={{ fontFamily: "monospace", color: "#085041" }}>Wq</code>：“我在找气象或状态吗” →{" "}
             <b style={{ color: "#993C1D", fontFamily: "monospace" }}>{ask(2, "Wq", 1).toFixed(2)}</b>，它并不在寻找什么。
           </div>
           <div style={{ marginTop: 4 }}>
-            换成 <b>怎么样</b> 再问一次 <code style={{ fontFamily: "monospace", color: "#085041" }}>Wq</code>：“我在找气象或状态吗” →{" "}
+            换成 <b>“怎么样”</b> 再问一次 <code style={{ fontFamily: "monospace", color: "#085041" }}>Wq</code>：“我在找气象或状态吗” →{" "}
             <b style={{ color: "#085041", fontFamily: "monospace" }}>{ask(3, "Wq", 1).toFixed(2)}</b>，它确实在寻找。
           </div>
         </div>
