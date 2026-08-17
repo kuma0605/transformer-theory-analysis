@@ -183,7 +183,7 @@ const STEPS = [
 
           <div style={{ marginTop: 10 }}>
             回到这个句子：<b>“怎么样”</b>相当于招聘方，需要找一个可以描述状态的对象；<b>“天气”</b>相当于应聘者，属于气象类词汇。被选中之后，“天气”提供的是它<b>完整的含义</b>。
-            这三种用途各自对应一个专用向量，也就是下一步的 <b>Q、K、V</b>。
+            上面两张卡片里出现了三份不同的信息：<b>我在找什么</b>、<b>我是什么</b>、<b>我能提供什么内容</b>。它们各自对应一个专用向量，也就是下一步的 <b>Q、K、V</b>。
           </div>
 
           <div style={{ marginTop: 10 }} />
@@ -199,12 +199,12 @@ const STEPS = [
     content: () => (
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Card>
-          <Label>上一步的三种用途，各对应一个专用向量</Label>
+          <Label>上一步的三份信息——我在找什么、我是什么、我能提供什么内容——各对应一个专用向量</Label>
           <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
             {[
               { role: "Q — Query（查询）", use: "用来 ① 打分", eq: "词向量 × Wq", meaning: "我在找什么", example: "“怎么样”的 Q：正在寻找气象或状态类的词", bg: "#E1F5EE", border: "#1D9E75", text: "#085041" },
-              { role: "K — Key（键）", use: "用来 ① 打分", eq: "词向量 × Wk", meaning: "我能被什么找到", example: "“天气”的 K：属于气象类的词", bg: "#EEEDFE", border: "#534AB7", text: "#3C3489" },
-              { role: "V — Value（值）", use: "用来 ② 混合", eq: "词向量 × Wv", meaning: "找到我能得到什么", example: "“天气”的 V：天气一词的完整含义", bg: "#FAEEDA", border: "#BA7517", text: "#633806" },
+              { role: "K — Key（键）", use: "用来 ① 打分", eq: "词向量 × Wk", meaning: "我是什么", example: "“天气”的 K：属于气象类的词", bg: "#EEEDFE", border: "#534AB7", text: "#3C3489" },
+              { role: "V — Value（值）", use: "用来 ② 混合", eq: "词向量 × Wv", meaning: "我能提供什么内容", example: "“天气”的 V：天气一词的完整含义", bg: "#FAEEDA", border: "#BA7517", text: "#633806" },
             ].map(({ role, use, eq, meaning, example, bg, border, text }) => (
               <div key={role} style={{ flex: 1, minWidth: 150, background: bg, border: `0.5px solid ${border}`, borderRadius: 10, padding: "12px 14px" }}>
                 <div style={{ fontWeight: 600, color: text, fontSize: 13, marginBottom: 2 }}>{role}</div>
@@ -492,7 +492,7 @@ const STEPS = [
       const steps = [
         { n: 1, label: "分词", desc: "句子切成 token：北京 / 的 / 天气 / 怎么样", bg: "#E6F1FB", border: "#185FA5", text: "#0C447C" },
         { n: 2, label: "Embedding", desc: "每个词转换成词向量", bg: "#EAF3DE", border: "#3B6D11", text: "#27500A" },
-        { n: 3, label: "生成 Q K V", desc: "词向量 × Wq/Wk/Wv → 三种用途的向量", bg: "#EEEDFE", border: "#534AB7", text: "#3C3489" },
+        { n: 3, label: "生成 Q K V", desc: "词向量 × Wq/Wk/Wv → 三份信息各自的向量", bg: "#EEEDFE", border: "#534AB7", text: "#3C3489" },
         { n: 4, label: "点积打分", desc: "“怎么样”的 Q × 每个词的 K → 相关度分数", bg: "#E1F5EE", border: "#1D9E75", text: "#085041" },
         { n: 5, label: "Softmax", desc: "相关度分数 → 合计为 1 的注意力权重", bg: "#FAEEDA", border: "#BA7517", text: "#633806" },
         { n: 6, label: "加权求 V", desc: "按权重对各词的 V 加权求和 → 融合上下文的表示", bg: "#FAECE7", border: "#993C1D", text: "#712B13" },
